@@ -7,7 +7,14 @@ import { ODOO_CONFIG } from '../config';
  */
 export const login = async () => {
     try {
-        const response = await api.post('/web/session/authenticate', {
+        // Log the credentials being used (for debugging)
+        console.log("Attempting login with:", {
+            db: ODOO_CONFIG.db,
+            login: ODOO_CONFIG.login,
+            url: ODOO_CONFIG.url
+        });
+
+        const payload = {
             jsonrpc: "2.0",
             method: "call",
             params: {
@@ -16,7 +23,13 @@ export const login = async () => {
                 password: ODOO_CONFIG.password,
             },
             id: 1
-        });
+        };
+
+        console.log("Request payload:", { ...payload, params: { ...payload.params, password: "***" } });
+
+        const response = await api.post('/web/session/authenticate', payload);
+
+        console.log("Login response:", response.data);
 
         if (response.data.result && response.data.result.uid) {
             console.log("Login successful:", response.data.result.username);
@@ -26,7 +39,8 @@ export const login = async () => {
             throw new Error(response.data.error?.data?.message || "Login failed");
         }
     } catch (error) {
-        console.error("Authentication error:", error);
+        console.error("Authentication error:", error.message);
+        console.error("Error details:", error.response?.data || error);
         throw error;
     }
 };

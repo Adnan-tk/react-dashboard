@@ -1,22 +1,19 @@
-// export const ODOO_CONFIG = {
-//     // db: "Dashboard",       // Reverted to match your Odoo database
-//     db: "Mayar-200.0",
-//     // login: "admin",        // Your Production Username
-//     login: "tecadmin",
-//     // password: "admin",     // Your Production Password (consider using environment variables for security)
-//     password: "1234567",
-//     // url: "https://febnoconst.febnotech.com" // Your Production URL
-//     url: "http://dash-analytics.febnotech.com"
-// };
-
-// export default ODOO_CONFIG;
-
-
+// Load credentials from environment variables with fallbacks for development
 export const ODOO_CONFIG = {
-    db: "odoo16_test",
-    login: "admin",
-    password: "admin",
-    url: "http://13.201.55.28"
+    db: import.meta.env.VITE_ODOO_DB || "odoo16_test",
+    login: import.meta.env.VITE_ODOO_LOGIN || "admin",
+    password: import.meta.env.VITE_ODOO_PASSWORD || "admin",
+    url: import.meta.env.VITE_ODOO_URL || "http://13.201.55.28"
 };
+
+// Debug: Log config in development (remove credentials from logs in production)
+if (import.meta.env.DEV) {
+    console.log("ODOO Config:", {
+        db: ODOO_CONFIG.db,
+        login: ODOO_CONFIG.login,
+        url: ODOO_CONFIG.url,
+        passwordSet: !!ODOO_CONFIG.password
+    });
+}
 
 export default ODOO_CONFIG;
