@@ -8,18 +8,21 @@ import { ODOO_CONFIG } from '../config';
 export const login = async () => {
     try {
         const response = await api.post('/web/session/authenticate', {
+            jsonrpc: "2.0",
+            method: "call",
             params: {
                 db: ODOO_CONFIG.db,
                 login: ODOO_CONFIG.login,
                 password: ODOO_CONFIG.password,
-            }
+            },
+            id: 1
         });
 
-        if (response.data.result) {
+        if (response.data.result && response.data.result.uid) {
             console.log("Login successful:", response.data.result.username);
             return response.data.result;
         } else {
-            console.error("Login failed:", response.data.error);
+            console.error("Login failed:", response.data);
             throw new Error(response.data.error?.data?.message || "Login failed");
         }
     } catch (error) {
